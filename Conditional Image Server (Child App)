@@ -1,6 +1,11 @@
 /**
  *  Conditional Image Server (Child App)
  *  Handles all the actual logic, OAuth, and image serving.
+ *  
+ *  Code originally from (taken with mimimal modifications)
+ *  Conditional Image Server by Justin Leonard 
+ *  Copyright\u00A9 2020 Justin Leonard
+ *   * Many thanks to @dman2306 help in rendering jpg output
  */
 
 definition(
