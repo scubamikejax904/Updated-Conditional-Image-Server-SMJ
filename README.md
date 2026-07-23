@@ -6,7 +6,7 @@ Copyright\u00A9 2020 Justin Leonard.
 
 This Hubitat app allows you to dynamically serve images (JPG, PNG, SVG, GIF) to your dashboard or external services. It works by reading an image URL from a Rule Machine Global Variable, fetching the image, and serving it via a local API endpoint.
 
-It uses a **Parent/Child app architecture**. The "Manager" app acts as a clean folder to keep your UI organized, while the "Child" apps handle the actual image serving and OAuth tokens independently.
+Modified to use a **Parent/Child app architecture**. The "Manager" app acts as a clean folder to keep your UI organized, while the "Child" apps handle the actual image serving and OAuth tokens independently. You are able to create multiple Child instances so you can have multiple different Conditional Images on the same or different Dashboards
 
 ## Prerequisites
 * **Rule Machine Global Variable Connector**: You must have this driver installed and a device created to hold your dynamic image URLs.
