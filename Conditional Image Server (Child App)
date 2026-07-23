@@ -1,0 +1,114 @@
+/**
+ *  Conditional Image Server (Child App)
+ *  Handles all the actual logic, OAuth, and image serving.
+ */
+
+definition(
+    name: "Conditional Image Server",
+    namespace: "scubamikejax904",
+    author: "Michael Gartner",
+    description: "Conditional Image Server Instance",
+    category: "Convenience",
+    iconUrl: "",
+    iconX2Url: "",
+    oauth: true, // <--- THE CHILD HANDLES OAUTH NOW
+    parent: "scubamikejax904:Conditional Image Server Manager", // Nests it under the Parent
+    singleInstance: false 
+)
+
+preferences {
+    page(name: "settings")
+}
+
+def settings(){
+    // The Child app generates its own token
+    if(!state.accessToken){	
+        try {
+            createAccessToken()
+        } catch (e) {
+            log.warn "Could not create access token. Please ensure OAuth is enabled for the CHILD app in the Apps Code menu."
+        }
+    }
+
+    def localUri = ""
+    if (state.accessToken) {
+        localUri = getFullLocalApiServerUrl() + "/conditionalImage?access_token=${state.accessToken}"
+    }
+
+    return dynamicPage(name: "settings", title: "Settings", install: true, uninstall: true){
+        
+        section("App Name") {
+            label title: "Assign a custom name for this instance", required: false
+        }
+
+        section("Rule Machine Global Variable Connector") {
+            input name: "inputConnector", type: "capability.actuator", title: "Rule Machine Global Variable Connector for Image URL", multiple: false, required: true
+        }
+        
+        section("") {
+            paragraph("<li>Configure different image files at different URLs.</li><li>Use Rule Machine to set the selected Global Variable Connector to different URLs under different conditions.</li>")  
+            
+            if (localUri) {
+                paragraph("<ul><li><strong>Local</strong>:<a href='${localUri}'>${localUri}</a></li></ul>")     
+            } else {
+                paragraph("<strong style='color:red;'>⚠️ OAuth is not enabled!</strong><br>Please enable OAuth for the 'Conditional Image Server' in the Apps Code menu.")
+            }
+        }
+    }
+}
+
+mappings { 
+    path("/conditionalImage") { action: [ GET: "getImage"] }
+}
+
+def installed() { initialize() }
+def initialize() { }
+def updated() { initialize() }
+def uninstalled() { }
+    
+def getImage() {
+    byte[] imageBytes = null
+    String imageURL = inputConnector?.currentValue("variable")
+    
+    if (!imageURL) {
+        log.error "No image URL found in the Global Variable Connector."
+        return
+    }
+    
+    def params = [
+        uri: imageURL,
+        headers: ["Accept": "image/jpeg; image/svg+xml; image/png; image/gif"]
+    ]
+    try {
+        httpGet(params) { resp ->
+            if(resp?.data != null) {
+                imageBytes = new byte[resp?.data.available()]
+                resp?.data.read(imageBytes)
+            } else {
+                log.error "Null Response"
+            }
+        }
+    } catch (exception) {
+        log.error "Conditional Image Server exception: ${exception.message}"
+    }
+
+    String extension = "";
+    int i = imageURL.lastIndexOf('.');
+    if (i > 0) {
+        extension = imageURL.substring(i+1).toLowerCase()
+    }
+    
+    def contentTypeString = null    
+    if (extension == "svg") contentTypeString = "image/svg+xml"
+    else if (extension == "jpg" || extension == "jpeg") contentTypeString = "image/jpeg"
+    else if (extension == "png") contentTypeString = "image/png"
+    else if (extension == "gif") contentTypeString = "image/gif"
+    else {
+        log.warn "Unknown file type: ${extension}. Defaulting to jpg."
+        contentTypeString = "image/jpeg"
+    }
+    
+    if (imageBytes) {
+        render contentType: contentTypeString, data: imageBytes, status: 200
+    }
+}
