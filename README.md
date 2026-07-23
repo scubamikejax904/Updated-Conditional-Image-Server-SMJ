@@ -39,6 +39,16 @@ It uses a **Parent/Child app architecture**. The "Manager" app acts as a clean f
 
 ## Setup and Usage
 
+### Creating your Global Variable
+1. On Hubitat open setting
+2. Open Hub Variables (under Hub Global Values)
+3. Click create new Variable (Green plus)
+4. Name the Variable ex: Holiday Image
+5. For Variable Type use String
+6. Set initial value to hello (this is just a placeholder as it needs something set to create the variable)
+7. Mouse click anywhere in the window (this finishes creating the variable)
+8. Scroll to your newly created variable and click on Create (this creates the connector allowing the Variable to be used in other places in Hubitat)
+
 ### Adding an Image Server Instance
 1. Open the **Conditional Image Server Manager** app from your User Apps list.
 2. Scroll down to the **Image Server Instances** section.
@@ -51,10 +61,16 @@ It uses a **Parent/Child app architecture**. The "Manager" app acts as a clean f
 1. Once the child instance is saved, open it back up from inside the Manager app.
 2. You will see a **Local** URL generated (e.g., `http://192.168.x.x/apps/api/123/conditionalImage?access_token=abc...`).
 3. Copy this URL and use it in your dashboard (e.g., SharpTools, Hubitat Dashboard) wherever you need the dynamic image to appear.
+4. In Hubitat dashboard (original not Easy, I do not use easy dashboards and am unsure of their capabilitis)
+   A. Create a tile for an image by clicking the "+"
+   B. leave the Pick a Device empty (don't select anything) Pick the Image Template
+   C.  Use the above URL as either the background Image Link (this will stretch the image to fill the Tile), or as the Image URL (this            will cause the image to expand or shrink to show the entire image
+  **I am unshure if this will work for the Dashboard Background, but I suspect it would as you can use a URL**
 
 ### How to Use with Rule Machine
 1. In Rule Machine, create a rule that triggers based on your desired conditions.
 2. As the action, set the **Global Variable** (via the Global Variable Connector device) to the direct URL of the image you want to display.
+   From my experience you must us an Https address, you can setup a github website and server your images from there or use any online image, I do recomend downloading the images as free online links frequently change or are removed, you can use a local NAS to serve images as long as it's accessable through Https.  (I use a Synology NAS with a DDNS address that is only locally accesable that has a certificate for Https access, it's overkill but it works)
 3. When your dashboard requests the Local API URL from Step 2, this app will instantly fetch the image from your variable's URL and serve it!
 
 ### Adding Multiple Instances
