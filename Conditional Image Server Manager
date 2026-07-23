@@ -1,0 +1,43 @@
+/**
+ *  Conditional Image Server Manager (Parent App)
+ *  A simple container to group multiple Child instances.
+ */
+
+definition(
+    name: "Conditional Image Server Manager",
+    namespace: "scubamikejax904",
+    author: "Michael Gartner",
+    description: "Container for Conditional Image Server instances",
+    category: "Convenience",
+    iconUrl: "",
+    iconX2Url: "",
+    singleInstance: true, 
+    childApps: [
+        [name: "imageServerChild", appName: "Conditional Image Server", namespace: "scubamikejax904"]
+    ]
+)
+
+preferences {
+    page(name: "mainPage")
+}
+
+def mainPage() {
+    dynamicPage(name: "mainPage", title: "Conditional Image Server Manager", install: true, uninstall: true) {
+        
+        section("Instructions") {
+            paragraph "Add your Conditional Image Server instances below. Each instance will manage its own settings and OAuth token independently."
+        }
+
+        section("Image Server Instances") {
+            app(name: "imageServerChild", 
+                appName: "Conditional Image Server", 
+                namespace: "scubamikejax904", 
+                multiple: true, 
+                title: "Create Conditional Image")
+        }
+    }
+}
+
+def installed() { log.info "Installed Manager App" }
+def updated() { log.info "Updated Manager App" }
+def uninstalled() { log.info "Uninstalled Manager App" }
