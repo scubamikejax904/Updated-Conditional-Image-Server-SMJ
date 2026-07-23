@@ -1,9 +1,8 @@
 # Modified Conditional Image Server for Hubitat by ScubaMikeJax904
 
-Code originally from (taken with mimimal modifications)
-Conditional Image Server by Justin Leonard 
-Copyright\u00A9 2020 Justin Leonard
- * Many thanks to @dman2306 help in rendering jpg output
+Code originally from Conditional Image Server by Justin Leonard. (taken with mimimal modifications). 
+Copyright\u00A9 2020 Justin Leonard.
+* Many thanks to @dman2306 help in rendering jpg output
 
 This Hubitat app allows you to dynamically serve images (JPG, PNG, SVG, GIF) to your dashboard or external services. It works by reading an image URL from a Rule Machine Global Variable, fetching the image, and serving it via a local API endpoint.
 
